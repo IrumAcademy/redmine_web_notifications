@@ -1,0 +1,44 @@
+<div class="contextual">
+  <% if @unread_count > 0 %>
+    <%= link_to l(:label_web_notification_mark_all_read), read_all_web_notifications_path,
+                method: :post, class: 'icon icon-checked' %>
+  <% end %>
+</div>
+
+<h2><%= l(:label_web_notifications) %></h2>
+
+<div class="tabs">
+  <ul>
+    <li><%= link_to l(:label_all), web_notifications_path, class: (@filter == 'all' ? 'selected' : nil) %></li>
+    <li><%= link_to "#{l(:label_web_notification_unread)} (#{@unread_count})", web_notifications_path(filter: 'unread'),
+                    class: (@filter == 'unread' ? 'selected' : nil) %></li>
+  </ul>
+</div>
+
+<% if @notifications.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <ul class="web-notification-list">
+    <% @notifications.each do |n| %>
+      <li class="<%= n.unread? ? 'unread' : 'read' %>">
+        <%= link_to web_notification_path(n), class: 'web-notification-link' do %>
+          <span class="web-notification-meta">
+            <span class="web-notification-kind"><%= n.kind_label %></span>
+            <% if n.project %><span><%= n.project.name %></span><% end %>
+            <% if n.actor %><span><%= n.actor.name %></span><% end %>
+            <span title="<%= format_time(n.created_on) %>"><%= n.ago_text %></span>
+          </span>
+          <span class="web-notification-title"><%= n.title %></span>
+          <% if n.summary.present? %><span class="web-notification-summary"><%= n.summary %></span><% end %>
+        <% end %>
+        <% if n.unread? %>
+          <%= link_to l(:label_web_notification_mark_read), read_web_notification_path(n), method: :post,
+                      class: 'web-notification-mark-read' %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+  <span class="pagination"><%= pagination_links_full @paginator, @count %></span>
+<% end %>
+
+<% html_title l(:label_web_notifications) %>

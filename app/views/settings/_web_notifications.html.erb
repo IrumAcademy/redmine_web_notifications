@@ -1,0 +1,11 @@
+<p>
+  <label for="settings_poll_interval"><%= l(:setting_web_notifications_poll_interval) %></label>
+  <%= number_field_tag 'settings[poll_interval]', @settings['poll_interval'], min: 15, max: 3600, size: 6,
+                       id: 'settings_poll_interval' %>
+  <em class="info"><%= l(:text_web_notifications_poll_interval) %></em>
+</p>
+<p>
+  <label for="settings_retention_days"><%= l(:setting_web_notifications_retention_days) %></label>
+  <%= number_field_tag 'settings[retention_days]', @settings['retention_days'], min: 1, size: 6,
+                       id: 'settings_retention_days' %>
+</p>
