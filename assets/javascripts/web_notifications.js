@@ -58,11 +58,32 @@
     '<path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.84V3.5' +
     'a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2z"/></svg>';
 
-  function buildBell() {
-    var menu = document.querySelector('#account ul') || document.querySelector('#top-menu ul');
-    if (!menu) return false;
+  // Redmine 7 turned the account links into an avatar drop-down (#account.dropdown inside
+  // .profile-menu). The bell then sits next to the avatar, outside the drop-down. Redmine 6 and
+  // older keep it as the first item of the #account list.
+  function redmine7Account() {
+    return document.querySelector('#top-menu .profile-menu > #account.dropdown');
+  }
 
-    var item = el('li', 'web-notifications-menu');
+  // Below Redmine's mobile breakpoint the whole #top-menu is hidden, so on Redmine 7 the bell
+  // moves into #header next to the menu toggle button, and back when the window gets wider.
+  function placeBell(item, account) {
+    var toggle = document.querySelector('#header > .js-flyout-menu-toggle-button');
+    var mobile = !!toggle && window.getComputedStyle(toggle).display !== 'none';
+    if (mobile) {
+      if (item.previousElementSibling !== toggle) toggle.parentNode.insertBefore(item, toggle.nextSibling);
+    } else if (item.nextElementSibling !== account) {
+      account.parentNode.insertBefore(item, account);
+    }
+    item.classList.toggle('web-notifications-menu--mobile', mobile);
+  }
+
+  function buildBell() {
+    var account = redmine7Account();
+    var menu = account ? null : (document.querySelector('#account ul') || document.querySelector('#top-menu ul'));
+    if (!account && !menu) return false;
+
+    var item = el(account ? 'div' : 'li', 'web-notifications-menu');
     bell = el('a', 'web-notifications-bell');
     bell.href = cfg.urls.index;
     bell.setAttribute('role', 'button');
@@ -77,15 +98,32 @@
 
     item.appendChild(bell);
     item.appendChild(panel);
-    menu.insertBefore(item, menu.firstChild);
+    if (account) {
+      item.classList.add('web-notifications-menu--header');
+      placeBell(item, account);
+      var placing = null;
+      window.addEventListener('resize', function () {
+        if (placing) return;
+        placing = window.requestAnimationFrame(function () {
+          placing = null;
+          var wasMobile = item.classList.contains('web-notifications-menu--mobile');
+          placeBell(item, account);
+          if (wasMobile !== item.classList.contains('web-notifications-menu--mobile')) closePanel();
+        });
+      });
+    } else {
+      menu.insertBefore(item, menu.firstChild);
+    }
 
     bell.addEventListener('click', function (event) {
       event.preventDefault();
       panel.hidden ? openPanel() : closePanel();
     });
+    // Capture phase: Redmine 7's account drop-down and the mobile menu toggle stop the click from
+    // bubbling, and opening either of them should still close the panel.
     document.addEventListener('click', function (event) {
       if (!panel.hidden && !item.contains(event.target)) closePanel();
-    });
+    }, true);
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && !panel.hidden) { closePanel(); bell.focus(); }
     });

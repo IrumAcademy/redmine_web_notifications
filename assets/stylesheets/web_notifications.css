@@ -39,7 +39,75 @@ a.web-notifications-bell svg {
   display: none;
 }
 
+/* Redmine 7: the bell stands on its own in .profile-menu, just before the avatar drop-down. */
+.web-notifications-menu--header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-inline-end: 12px;
+}
+
+/* Same look as Redmine 7's own top menu links. Class selectors only, so a theme's #top-menu rules
+   still win. */
+.web-notifications-menu--header a.web-notifications-bell {
+  margin: 0;
+  padding: 3px 6px;
+  border-radius: 3px;
+  color: var(--oc-gray-1, inherit);
+  text-decoration: none;
+}
+
+.web-notifications-menu--header a.web-notifications-bell:hover {
+  color: var(--oc-white, inherit);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Redmine 7 below its mobile breakpoint: #top-menu is hidden, the bell sits in #header next to the
+   menu toggle button and the panel spans the screen under the header. */
+#header .web-notifications-menu--mobile {
+  float: inline-end;
+  position: relative;
+  z-index: 10;
+  block-size: 64px;
+  margin: 0;
+  padding-inline: 14px;
+}
+
+#header .web-notifications-menu--mobile a.web-notifications-bell {
+  padding: 8px;
+  margin: 0;
+  color: inherit;
+}
+
+#header .web-notifications-menu--mobile a.web-notifications-bell svg {
+  width: 22px;
+  height: 22px;
+}
+
+#header .web-notifications-menu--mobile .web-notifications-badge {
+  top: 0;
+  right: -2px;
+}
+
+#header .web-notifications-menu--mobile .web-notifications-panel {
+  position: fixed;
+  top: 68px;
+  left: 8px;
+  right: 8px;
+  width: auto;
+  max-width: none;
+}
+
+#header .web-notifications-menu--mobile .web-notifications-panel ul.web-notifications-items {
+  max-height: calc(100vh - 68px - 8px - 100px);
+  max-height: calc(100dvh - 68px - 8px - 100px);
+}
+
 /* Drop-down panel ------------------------------------------------------------------------- */
+
+/* Colours can be changed by a theme (e.g. a dark mode) through these custom properties:
+   --web-notifications-bg, -text, -title, -summary, -muted, -link, -border, -divider, -hover-bg,
+   -unread-bg, -unread-hover-bg. The fallbacks below are the defaults. */
 
 .web-notifications-panel {
   position: absolute;
@@ -48,9 +116,9 @@ a.web-notifications-bell svg {
   z-index: 1000;
   width: 380px;
   max-width: calc(100vw - 24px);
-  background: #fff;
-  color: #333;
-  border: 1px solid #d7dbe0;
+  background: var(--web-notifications-bg, #fff);
+  color: var(--web-notifications-text, #333);
+  border: 1px solid var(--web-notifications-border, #d7dbe0);
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   text-align: left;
@@ -72,11 +140,11 @@ a.web-notifications-bell svg {
 }
 
 .web-notifications-panel-header {
-  border-bottom: 1px solid #eceef1;
+  border-bottom: 1px solid var(--web-notifications-divider, #eceef1);
 }
 
 .web-notifications-panel-footer {
-  border-top: 1px solid #eceef1;
+  border-top: 1px solid var(--web-notifications-divider, #eceef1);
   font-size: 0.9em;
 }
 
@@ -84,7 +152,7 @@ a.web-notifications-bell svg {
   background: none;
   border: 0;
   padding: 0;
-  color: #2a5a8c;
+  color: var(--web-notifications-link, #2a5a8c);
   cursor: pointer;
   font: inherit;
   font-size: 0.9em;
@@ -95,11 +163,13 @@ a.web-notifications-bell svg {
 }
 
 .web-notifications-desktop-denied {
-  color: #888;
+  color: var(--web-notifications-muted, #888);
   font-size: 0.85em;
 }
 
 #account .web-notifications-panel ul.web-notifications-items,
+#top-menu .web-notifications-panel ul.web-notifications-items,
+#header .web-notifications-panel ul.web-notifications-items,
 .web-notifications-panel ul.web-notifications-items {
   display: block;
   max-height: 420px;
@@ -110,22 +180,26 @@ a.web-notifications-bell svg {
 }
 
 #account .web-notifications-panel ul.web-notifications-items li,
+#top-menu .web-notifications-panel ul.web-notifications-items li,
+#header .web-notifications-panel ul.web-notifications-items li,
 .web-notifications-panel ul.web-notifications-items li {
   display: block;
   float: none;
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid #f1f2f4;
+  border-bottom: 1px solid var(--web-notifications-divider, #f1f2f4);
 }
 
 .web-notifications-items li.web-notifications-empty,
 .web-notifications-items li.web-notifications-loading {
   padding: 18px 14px;
-  color: #888;
+  color: var(--web-notifications-muted, #888);
   text-align: center;
 }
 
 #account .web-notifications-panel .web-notifications-items a,
+#top-menu .web-notifications-panel .web-notifications-items a,
+#header .web-notifications-panel .web-notifications-items a,
 .web-notifications-panel .web-notifications-items a {
   display: block;
   margin: 0;
@@ -135,15 +209,15 @@ a.web-notifications-bell svg {
 }
 
 .web-notifications-panel .web-notifications-items a:hover {
-  background: #f5f7fa;
+  background: var(--web-notifications-hover-bg, #f5f7fa);
 }
 
 .web-notifications-items li.unread a {
-  background: #eef5ff;
+  background: var(--web-notifications-unread-bg, #eef5ff);
 }
 
 .web-notifications-items li.unread a:hover {
-  background: #e3eefc;
+  background: var(--web-notifications-unread-hover-bg, #e3eefc);
 }
 
 /* Shared item layout (panel and full list page) --------------------------------------------- */
@@ -153,13 +227,13 @@ a.web-notifications-bell svg {
   display: flex;
   flex-wrap: wrap;
   gap: 2px 8px;
-  color: #888;
+  color: var(--web-notifications-muted, #888);
   font-size: 0.85em;
 }
 
 .web-notifications-kind,
 .web-notification-kind {
-  color: #2a5a8c;
+  color: var(--web-notifications-link, #2a5a8c);
   font-weight: bold;
 }
 
@@ -167,7 +241,7 @@ a.web-notifications-bell svg {
 .web-notification-title {
   display: block;
   margin-top: 2px;
-  color: #222;
+  color: var(--web-notifications-title, #222);
   overflow-wrap: anywhere;
 }
 
@@ -183,7 +257,7 @@ a.web-notifications-bell svg {
   -webkit-line-clamp: 2;
   overflow: hidden;
   margin-top: 2px;
-  color: #666;
+  color: var(--web-notifications-summary, #666);
   font-size: 0.9em;
   overflow-wrap: anywhere;
 }
@@ -194,7 +268,7 @@ ul.web-notification-list {
   margin: 0 0 1em;
   padding: 0;
   list-style: none;
-  border-top: 1px solid #eceef1;
+  border-top: 1px solid var(--web-notifications-divider, #eceef1);
 }
 
 ul.web-notification-list li {
@@ -202,11 +276,11 @@ ul.web-notification-list li {
   align-items: flex-start;
   gap: 12px;
   padding: 10px 8px;
-  border-bottom: 1px solid #eceef1;
+  border-bottom: 1px solid var(--web-notifications-divider, #eceef1);
 }
 
 ul.web-notification-list li.unread {
-  background: #eef5ff;
+  background: var(--web-notifications-unread-bg, #eef5ff);
 }
 
 ul.web-notification-list a.web-notification-link {
@@ -229,20 +303,25 @@ ul.web-notification-list .web-notification-mark-read {
    inside that menu, so put the defaults back. Some sites force the top menu link colour with
    !important, so the panel's link colours need it too. -------------------------------------- */
 
-#top-menu .web-notifications-panel li {
+#top-menu .web-notifications-panel li,
+#header .web-notifications-panel li {
   float: none;
   margin: 0;
   white-space: normal;
 }
 
 #top-menu .web-notifications-panel a,
-#top-menu .web-notifications-panel a:hover {
-  color: #2a5a8c !important;
+#top-menu .web-notifications-panel a:hover,
+#header .web-notifications-panel a,
+#header .web-notifications-panel a:hover {
+  color: var(--web-notifications-link, #2a5a8c) !important;
   font-weight: normal;
 }
 
 #top-menu .web-notifications-panel .web-notifications-items a,
-#top-menu .web-notifications-panel .web-notifications-items a:hover {
-  color: #333 !important;
+#top-menu .web-notifications-panel .web-notifications-items a:hover,
+#header .web-notifications-panel .web-notifications-items a,
+#header .web-notifications-panel .web-notifications-items a:hover {
+  color: var(--web-notifications-text, #333) !important;
   text-decoration: none;
 }
