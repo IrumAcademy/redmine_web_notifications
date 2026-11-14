@@ -37,7 +37,7 @@ Supported events: new issue, issue update, @mention, new or updated wiki page, n
 
 ```sh
 cd /path/to/redmine/plugins
-git clone https://github.com/TrueShine/redmine_web_notifications.git
+git clone https://github.com/IrumAcademy/redmine_web_notifications.git
 cd ..
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 # restart Redmine

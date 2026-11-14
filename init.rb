@@ -4,11 +4,11 @@ require_relative 'lib/redmine_web_notifications/view_hook'
 
 Redmine::Plugin.register :redmine_web_notifications do
   name 'Redmine Web Notifications'
-  author 'TrueShine'
+  author 'IrumAcademy'
   description 'Header bell and browser desktop notifications that follow Redmine email notification rules'
   version '0.1.0'
-  url 'https://github.com/TrueShine/redmine_web_notifications'
-  author_url 'https://github.com/TrueShine'
+  url 'https://github.com/IrumAcademy/redmine_web_notifications'
+  author_url 'https://github.com/IrumAcademy'
   requires_redmine version_or_higher: '6.0'
 
   settings default: { 'poll_interval' => '60', 'retention_days' => '90' },
